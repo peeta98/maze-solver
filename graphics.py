@@ -9,7 +9,7 @@ class Window:
     self.__canvas.pack(fill=BOTH, expand=1)
     self.__running = False
 
-  def draw_line(self, line, fill_color):
+  def draw_line(self, line, fill_color="black"):
     line.draw(self.__canvas, fill_color)
 
   def redraw(self):
