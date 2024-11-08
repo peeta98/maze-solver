@@ -116,3 +116,50 @@ class Maze:
     for col in self._cells:
       for cell in col:
         cell.visited = False
+
+  def _solve_r(self, col, row):
+    current_cell = self._cells[col][row]
+    self._animate()
+    current_cell.visited = True
+    is_end_cell = current_cell == self._cells[-1][-1]
+
+    # We reached our final destination, maze is solved
+    if is_end_cell:
+      return True
+    
+    # List of all valid neighbors as tuples => (neighbor_cell.col, neighbor_cell.row)
+    cell_neighbors = []
+
+    # Check if left cell is valid and unvisited
+    if row-1 >= 0 and not self._cells[col][row-1].visited and self._cells[col][row-1].has_right_wall == False:
+      cell_neighbors.append((col, row-1))
+
+    # Check if right cell is valid and unvisited
+    if row+1 < self._num_rows and not self._cells[col][row+1].visited and self._cells[col][row+1].has_left_wall == False:
+      cell_neighbors.append((col, row+1))
+
+    # Check if top cell is valid and unvisited
+    if col-1 >= 0 and not self._cells[col-1][row].visited and self._cells[col-1][row].has_bottom_wall == False:
+      cell_neighbors.append((col-1, row))
+
+    # Check if bottom cell is valid and unvisited
+    if col+1 < self._num_cols and not self._cells[col+1][row].visited and self._cells[col+1][row].has_top_wall == False:
+      cell_neighbors.append((col+1, row))
+
+    for cell in cell_neighbors:
+      next_col, next_row = cell
+
+      # Draw the move from current cell to the neighbor
+      current_cell.draw_move(self._cells[next_col][next_row])
+
+      # Recursively try to solve from this neighbor
+      if self._solve_r(next_col, next_row):
+        return True  # Maze Solved
+
+      # If not solved, undo the move
+      current_cell.draw_move(self._cells[next_col][next_row], True)
+
+    return False
+
+  def solve(self):
+    return self._solve_r(0, 0)
